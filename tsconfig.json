@@ -1,9 +1,10 @@
 {
 	"compilerOptions": {
-		"target": "es2024",
+		"target": "ES2024",
 		"module": "CommonJS",
-		"rootDir": "./src",
-		"baseUrl": "./src",
+		"moduleResolution": "node",
+		"rootDir": ".",
+		"baseUrl": "src",
 		"paths": {
 			"@/*": ["*"]
 		},
@@ -11,5 +12,6 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true
-	}
+	},
+	"include": ["src", "vitest.config.ts"]
 }
