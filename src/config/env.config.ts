@@ -10,7 +10,7 @@ const envSchema = z.object({
 	NODE_ENV: z
 		.enum(["development", "production", "staging"])
 		.default("development"),
-	SERVICE_NAME: z.string().optional(),
+	SERVICE_NAME: z.string().default('quality-supplier'),
 	LOG_LEVEL: z.string().default("info"),
 	DB_HOST: z.string().default("localhost"),
 	DB_PORT: z.coerce.number().default(3306),
