@@ -1,26 +1,43 @@
-import express from "express";
-import * as Sentry from "@sentry/node";
-import cors from "cors";
-import helmet from "helmet";
-import compression from "compression";
+import Fastify from "fastify";
 import { router } from "./routes";
 import { errorHandler } from "../../middlewares/error.middleware";
-import { sendTestEmailSuccess } from "../../modules/notification/notification.controller";
+import { Sentry } from "@/infra/observability/sentry";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import {
+	jsonSchemaTransform,
+	serializerCompiler,
+	validatorCompiler,
+} from "fastify-type-provider-zod";
 
-export const app = express();
+export const buildApp = async () => {
+	const app = Fastify();
 
-app.use(helmet());
-app.use(cors());
-app.use(compression());
-app.use(express.json());
+	await app.register(import("@fastify/helmet"));
+	await app.register(import("@fastify/cors"));
+	await app.register(import("@fastify/compress"));
+	await app.register(import("@fastify/sensible"));
 
-app.use(router);
-app.post("/test-email", sendTestEmailSuccess);
+	app.setValidatorCompiler(validatorCompiler);
+	app.setSerializerCompiler(serializerCompiler);
 
+	app.register(fastifySwagger, {
+		openapi: {
+			info: { title: "Quality API", version: "1.0.0" },
+		},
+		transform: jsonSchemaTransform,
+	});
 
-Sentry.setupExpressErrorHandler(app);
+	app.register(fastifySwaggerUi, {
+		routePrefix: "/docs",
+	});
 
-app.use(errorHandler);
+	await app.register(router);
+	Sentry.setupFastifyErrorHandler(app);
 
+	app.setErrorHandler(errorHandler);
+
+	return app;
+};
 
 //TODO: Implementar Caddy ao invés de Greenlock

@@ -1,30 +1,29 @@
-import { Request, Response, NextFunction } from "express";
+import { FastifyRequest, FastifyReply, FastifyError } from "fastify";
 import { ApiError } from "@/shared/http/api.error";
 
 export function errorHandler(
-	err: unknown,
-	req: Request,
-	res: Response,
-	next: NextFunction,
+	error: FastifyError,
+	request: FastifyRequest,
+	reply: FastifyReply,
 ) {
-	if (err instanceof ApiError) {
-		return res.status(err.statusCode).json({
+	if (error instanceof ApiError) {
+		return reply.status(error.statusCode).send({
 			success: false,
-			error: { message: err.message, code: err.statusCode },
+			error: { message: error.message, code: error.statusCode },
 		});
 	}
 
-	if (err instanceof Error) {
-		return res.status(500).json({
+	if (error instanceof Error) {
+		return reply.status(500).send({
 			success: false,
 			error: {
-				message: err.message || "Internal server error",
+				message: error.message || "Internal server error",
 				code: 500,
 			},
 		});
 	}
 
-	return res.status(500).json({
+	return reply.status(500).send({
 		success: false,
 		error: { message: "Internal server error", code: 500 },
 	});

@@ -15,6 +15,7 @@ const config: Config = {
 	migrations: {
 		table: "migrations",
 	},
+	verbose: true
 };
 
 export default config;

@@ -1,10 +1,12 @@
-import { Router } from "express";
+import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import notificationRouter from "@/modules/notification/routes";
 import healthRouter from "@/modules/health/routes";
 
-export const router = Router();
-
-router.use("/notifications", notificationRouter);
-router.use("/health", healthRouter);
-
-router.use("/error", healthRouter);
+export async function router(
+	fastify: FastifyInstance,
+	opts: FastifyPluginOptions,
+) {
+	await fastify.register(notificationRouter, { prefix: "/notifications" });
+	await fastify.register(healthRouter, { prefix: "/health" });
+	await fastify.register(healthRouter, { prefix: "/error" });
+}

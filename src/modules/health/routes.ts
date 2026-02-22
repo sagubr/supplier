@@ -1,13 +1,11 @@
-import { Router } from "express";
+import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
-const healthRouter = Router();
+export default async function healthRouter(fastify: FastifyInstance, opts: FastifyPluginOptions) {
+	fastify.get("/", async (_request, reply) => {
+		return reply.send({ status: "ok" });
+	});
 
-healthRouter.get("/", (_, res) => {
-	res.json({ status: "ok" });
-});
-
-healthRouter.get("/debug-sentry", (_req, _res) => {
-	throw new Error("Intentional error for testing");
-});
-
-export default healthRouter;
+	fastify.get("/debug-sentry", async (_request, _reply) => {
+		throw new Error("Intentional error for testing");
+	});
+}

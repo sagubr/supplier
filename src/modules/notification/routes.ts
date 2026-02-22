@@ -1,13 +1,31 @@
-import { Router } from "express";
+import { FastifyInstance } from "fastify";
+import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import {
-	sendTestEmailError,
 	sendTestEmailSuccess,
+	sendTestEmailError,
 } from "./notification.controller";
+import { createNotificationSchema } from "./schema";
 
-const notificationRouter = Router();
+export default async function notificationRouter(fastify: FastifyInstance) {
+	const app = fastify.withTypeProvider<ZodTypeProvider>();
 
-notificationRouter.post("/send-success", sendTestEmailSuccess);
-notificationRouter.post("/send-error", sendTestEmailError);
+	app.post(
+		"/send-success",
+		{
+			schema: {
+				body: createNotificationSchema,
+			},
+		},
+		sendTestEmailSuccess,
+	);
 
-export default notificationRouter;
-
+	app.post(
+		"/send-error",
+		{
+			schema: {
+				body: createNotificationSchema,
+			},
+		},
+		sendTestEmailError,
+	);
+}
