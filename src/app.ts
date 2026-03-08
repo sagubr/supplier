@@ -49,7 +49,7 @@ export const buildApp = async () => {
 			},
 			servers: [
 				{
-					url: "http://localhost:3005",
+					url: "https://supplier-api.gcode.dev.br",
 					description: "Servidor local para desenvolvimento",
 				},
 			],
