@@ -12,3 +12,4 @@ logs/
 # TypeScript build
 dist/
 
+coverage/
